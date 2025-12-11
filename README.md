@@ -15,6 +15,9 @@
 * [Metrics Plan](#metrics-plan)
 * [Power BI Modeling](#power-bi-modeling)
 * [DAX Measures](#dax-measures)
+* [Power BI PROCEDURE](#Power-BI-PROCEDURE)
+* [Power BI final link](#Power-BI-final-link)
+
 
 ---
 
