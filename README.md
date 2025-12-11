@@ -15,11 +15,6 @@
 * [Metrics Plan](#metrics-plan)
 * [Power BI Modeling](#power-bi-modeling)
 * [DAX Measures](#dax-measures)
-* [Validation](#validation)
-* [Draft Findings](#draft-findings)
-* [Reproducibility Steps](#reproducibility-steps)
-* [Deliverables Checklist](#deliverables-checklist)
-* [Next Steps](#next-steps)
 
 ---
 
@@ -219,9 +214,3 @@ CALCULATE(
 
 ---
 ## Power BI final link
-
----
-
-
-**LISTO.**
-Este archivo está 100% listo para copiar y pegar como `README.md` en GitHub. Si querés, te preparo una **versión aún más formal** o una **versión con tabla de contenidos automática generada por GitHub**.
