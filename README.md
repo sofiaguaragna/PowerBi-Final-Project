@@ -75,7 +75,6 @@ Tables used:
 * order_items
 * products
 * inventory_items
-* distribution_centers
 
 These tables were used without modification and served as the source to generate the Silver layer.
 
@@ -83,84 +82,50 @@ These tables were used without modification and served as the source to generate
 
 # ER Diagram
 
-The model includes the relationships defined between the Bronze tables. The following was one of the firsts versions of the diagram
-
-https://dbdiagram.io/d/E-Commerce-bronc-691a25666735e111700f8739 
-
-*(Insert the image `Integrador capa bronce.png` here in your repo)*
+The model includes the relationships defined between the Bronze tables. The following was one of the firsts versions of the diagram whit of all the data base used to have a general understanding
+(raw)
+https://dbdiagram.io/d/E-Commerce-raw-691a25666735e111700f8739
+Then:
+https://dbdiagram.io/d/E-Commerce-bronce-691a25666735e111700f8739
 
 ---
 
 # Silver Layer — SQL Transformations
 
 The following Code was used to create the silver layer: 
-## Fact Table — Orders
+## SQL CODIFICATION TO CREATE SILVER LAYER
 ```
-
-## Fact Table — Orders
-
-```sql
+CREATE Schema If not exists `integradorsg.silver`
+--------------------fact------------------------------
 CREATE OR REPLACE TABLE `integradorsg.silver.fact` AS
-SELECT
-  order_id,
-  user_id,
-  status,
-  created_at,
+SELECT order_id, user_id,status, created_at,
   EXTRACT(YEAR FROM created_at) AS year,
   EXTRACT(MONTH FROM created_at) AS month,
   EXTRACT(DAY FROM created_at) AS day
-FROM `bigquery-public-data.thelook_ecommerce.orders`;
-```
-
-## Dimension 1 — Users
-
-```sql
+FROM `bigquery-public-data.thelook_ecommerce.orders` 
+------------------dim1------------------------------------
 CREATE OR REPLACE TABLE `integradorsg.silver.dim1` AS
-SELECT
-  id AS user_id,
-  gender,
-  age,
-  country,
-  latitude,
-  longitude
-FROM `bigquery-public-data.thelook_ecommerce.users`;
-```
-
-## Dimension 2 — Order Items
-
-```sql
+SELECT id as User_id, gender, age, country, latitude, longitude
+FROM `bigquery-public-data.thelook_ecommerce.users` 
+------------------dim2------------------------------------
 CREATE OR REPLACE TABLE `integradorsg.silver.dim2` AS
-SELECT
-  order_id,
-  user_id,
-  product_id,
-  sale_price
-FROM `bigquery-public-data.thelook_ecommerce.order_items`;
+SELECT order_id, user_id, product_id sale_price 
+FROM `bigquery-public-data.thelook_ecommerce.order_items` 
+-------------------dim3------------------------------------
+Select id as product_id, category, brand, department
+From `bigquery-public-data.thelook_ecommerce.products` 
 ```
 
-## Dimension 3 — Products
-
-```sql
-CREATE OR REPLACE TABLE `integradorsg.silver.dim3` AS
-SELECT
-  id AS product_id,
-  category,
-  brand,
-  department
-FROM `bigquery-public-data.thelook_ecommerce.products`;
-```
-
----
 
 # Metrics Plan
 
-| KPI                 | Business Definition            | Technical Definition             | Visual              |
-| ------------------- | ------------------------------ | -------------------------------- | ------------------- |
-| Total Orders        | Number of unique orders        | DISTINCTCOUNT(order_id)          | Card                |
-| Total Products Sold | Items sold                     | COUNTROWS(dim2)                  | Card / bar chart    |
-| Average Ticket      | Average order value            | TotalSales / TotalOrders         | Card                |
-| Returning Customers | Users with more than one order | Count users with order_count > 1 | Card / cohort table |
-| % Cancelled Orders  | Share of orders cancelled      | CancelledOrders / TotalOrders    | Card                |
+| KPI                 | Business Definition            | Visual              |
+| ------------------- | ------------------------------ | ------------------- |
+| Total Orders        | Number of unique orders        | Card                |
+| Total Products Sold | Items sold                     | Card / bar chart    |
+| Average Ticket      | Average order value            | Card                |
+| Returning Customers | Users with more than one order | Card / cohort table |
+| % Cancelled Orders  | Share of orders cancelled      | Card                |
 
 ---
 
