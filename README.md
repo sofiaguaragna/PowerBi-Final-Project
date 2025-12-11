@@ -13,7 +13,7 @@
 * [ER Diagram](#er-diagram)
 * [Silver Layer — SQL Transformations](#silver-layer--sql-transformations)
 * [Metrics Plan](#metrics-plan)
-* [Power BI — ETL and Modeling](#power-bi--etl-and-modeling)
+* [Power BI Modeling](#power-bi-modeling)
 * [DAX Measures](#dax-measures)
 * [Validation](#validation)
 * [Draft Findings](#draft-findings)
@@ -87,6 +87,8 @@ The model includes the relationships defined between the Bronze tables. The foll
 https://dbdiagram.io/d/E-Commerce-raw-691a25666735e111700f8739
 Then:
 https://dbdiagram.io/d/E-Commerce-bronce-691a25666735e111700f8739
+FINAL DIAGRAM
+<img width="972" height="732" alt="image" src="https://github.com/user-attachments/assets/2638c1ce-9e8a-4943-aa22-8e86346732c7" />
 
 ---
 
@@ -129,7 +131,7 @@ From `bigquery-public-data.thelook_ecommerce.products`
 
 ---
 
-# Power BI — ETL and Modeling
+# Power BI Modeling
 
 ## Import
 
@@ -139,119 +141,87 @@ From `bigquery-public-data.thelook_ecommerce.products`
 ## Transformations
 
 * Convert `created_at` to DateTime.
-* Hide technical fields not required in the report.
-
-## Relationships
-
-* fact.order_id → dim2.order_id
-* fact.user_id → dim1.user_id
-* dim2.product_id → dim3.product_id
-
-## Suggested Report Pages
-
-1. Overall KPIs and trends
-2. Customer segmentation and behavior
-3. Product performance
-4. Order efficiency and cancellations
-5. Geographic distribution
-
----
+*
+```
+  Dim_Calendar = ADDCOLUMNS (
+CALENDAR ( DATE( YEAR ( MIN ( 'fact'[created_at])), 01, 01), DATE( YEAR( MAX( 'fact'[created_at]) ), 12, 31 ) ),
+"FechaSK", FORMAT ( [Date], "YYYYMMDD" ),
+"#Año", YEAR ( [Date] ),
+"#Trimestre", QUARTER ( [Date] ),
+"#Mes", MONTH ( [Date] ),
+"#Día", DAY ( [Date] ),
+"Trimestre", "T" & FORMAT ( [Date], "Q" ),
+"Mes", FORMAT ( [Date], "MMMM" ),
+"MesCorto", FORMAT ( [Date], "MMM" ),
+"#DíaSemana", WEEKDAY ( [Date],2 ),
+"#SemanaAño", WEEKNUM ( [Date],2 ),
+"CierreSemana", ( [Date] + 7 - WEEKDAY( [Date],2 ) ),
+"Día", FORMAT ( [Date], "DDDD" ),
+"DíaCorto", FORMAT ( [Date], "DDD" ),
+"AñoTrimestre", FORMAT ( [Date], "YYYY" ) & "/T" & FORMAT ( [Date], "Q" ),
+"Año#Mes", FORMAT ( [Date], "YYYY/MM" ),
+"AñoMesCorto", FORMAT ( [Date], "YYYY/mmm" ),
+"InicioMes", EOMONTH( [Date], -1) + 1,
+"FinMes", EOMONTH( [Date], 0) )
+```
 
 # DAX Measures
 
-```dax
-Total Orders = DISTINCTCOUNT(fact[order_id])
-
-Total Products Sold = COUNTROWS(dim2)
-
-Total Sales = SUM(dim2[sale_price])
-
-Average Ticket =
-DIVIDE([Total Sales], [Total Orders], 0)
-
-Returning Customers =
-VAR OrdersPerUser =
-    SUMMARIZE(
-        fact,
-        fact[user_id],
-        "OrdersCount",
-            COUNTX(
-                FILTER(fact, fact[user_id] = EARLIER(fact[user_id])),
-                fact[order_id]
-            )
-    )
-RETURN
-    COUNTROWS(FILTER(OrdersPerUser, [OrdersCount] > 1))
-
-Pct Cancelled =
+```DAX MEASURES
+% Cancelados = 
 DIVIDE(
-    CALCULATE(DISTINCTCOUNT(fact[order_id]), fact[status] = "cancelled"),
-    [Total Orders],
+    [Órdenes Canceladas],
+    [Total Órdenes],
     0
 )
+Órdenes Canceladas = 
+CALCULATE(
+    COUNTROWS(fact),
+    fact[status] = "Cancelled"
+)
+Ticket Promedio = [Total ventas]/[Total Órdenes]
+
+Total Órdenes = DISTINCTCOUNT(fact[order_id])
+
+Total ventas = SUM(dim2[sale_price])
+
+Órdenes por Cliente = 
+CALCULATE(
+    DISTINCTCOUNT('fact'[order_id]),
+    ALLEXCEPT('fact', 'fact'[user_id])
+)
+Clientes Totales = DISTINCTCOUNT('fact'[user_id])
+Clientes Recurrentes (%) = 
+DIVIDE(
+    [Clientes Recurrentes],
+    [Clientes Totales]
+)
+Clientes Recurrentes = 
+CALCULATE(
+    DISTINCTCOUNT('fact'[user_id]),
+    FILTER(
+        VALUES('fact'[user_id]),
+        CALCULATE(DISTINCTCOUNT('fact'[order_id])) > 1
+    )
+)
+
+
 ```
 
----
-
-# Validation
-
-* Row counts between Bronze and Silver validated.
-* Spot-checks for consistency of `order_id` across fact and dimensions.
-* Validation of parsed dates.
-* Latitude and longitude ranges verified.
-
----
-
-# Draft Findings
-
-Replace the placeholders with your actual dashboard results.
-
-* Sales seasonality shows increased activity in **[Month X]** and **[Month Y]**.
-* The top-performing product or category is **[Product/Category]**.
-* Average ticket is **$[Value]**.
-* Percentage of returning customers is **[Value%]**.
-* Cancellation rate is **[Value%]**.
-* Most customers are located in **[Region/City]**.
-
----
-
-# Reproducibility Steps
-
-## BigQuery
-
-1. Create dataset `integradorsg.silver`.
-2. Run the SQL scripts listed above to generate all Silver tables.
-
-## Power BI
+## Power BI PROCEDURE
 
 1. Connect to BigQuery and load Silver tables.
 2. Apply transformations as described.
 3. Create the relationships.
 4. Add the DAX measures.
-5. Build visualization pages.
+5. Build visualization pages. Add filters and segments. Edit design
 6. Publish the report to Power BI Service.
 
 ---
-
-# Deliverables Checklist
-
-* [x] Bronze layer defined
-* [x] Silver SQL transformations created
-* [x] Power BI model built
-* [x] KPIs defined and implemented
-* [x] README documented
-* [ ] Screenshots added
-* [ ] Power BI service link inserted
+## Power BI final link
 
 ---
 
-# Next Steps
-
-* Add screenshots from Power BI.
-* Add the published Power BI link.
-* Replace placeholder values in the Findings section.
-
----
 
 **LISTO.**
 Este archivo está 100% listo para copiar y pegar como `README.md` en GitHub. Si querés, te preparo una **versión aún más formal** o una **versión con tabla de contenidos automática generada por GitHub**.
