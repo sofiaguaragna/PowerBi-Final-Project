@@ -119,13 +119,13 @@ From `bigquery-public-data.thelook_ecommerce.products`
 
 # Metrics Plan
 
-| KPI                 | Business Definition            | Visual              |
-| ------------------- | ------------------------------ | ------------------- |
-| Total Orders        | Number of unique orders        | Card                |
-| Total Products Sold | Items sold                     | Card / bar chart    |
-| Average Ticket      | Average order value            | Card                |
-| Returning Customers | Users with more than one order | Card / cohort table |
-| % Cancelled Orders  | Share of orders cancelled      | Card                |
+| KPI                 | Business Definition            |
+| ------------------- | ------------------------------ | 
+| Total Orders        | Number of unique orders        | 
+| Total Products Sold | Items sold                     | 
+| Average Ticket      | Average order value            | 
+| Returning Customers | Users with more than one order | 
+| % Cancelled Orders  | Share of orders cancelled      | 
 
 ---
 
