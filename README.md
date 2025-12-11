@@ -217,3 +217,5 @@ CALCULATE(
 
 ---
 ## Power BI final link
+https://drive.google.com/file/d/1oNxqDkRyUOiSOLJigAeq6tRCNc2qd_dG/view?usp=sharing
+
