@@ -216,6 +216,22 @@ CALCULATE(
 6. Publish the report to Power BI Service.
 
 ---
-## Power BI final link
+## Power BI final link and screens
 https://drive.google.com/file/d/1oNxqDkRyUOiSOLJigAeq6tRCNc2qd_dG/view?usp=sharing
+
+## First page - Index
+
+<img width="1154" height="653" alt="image" src="https://github.com/user-attachments/assets/0cfbea90-28c9-4049-a605-f079b5fbed5c" />
+
+## Second page - Sales analysis and metrics
+<img width="1161" height="697" alt="image" src="https://github.com/user-attachments/assets/09fa3c47-363e-4073-a09c-818e07e268e3" />
+
+## Third page - Segmentation and users
+<img width="1170" height="656" alt="image" src="https://github.com/user-attachments/assets/82c82eff-9ad2-4763-9beb-3334bf429dc8" />
+
+## Forth page - Users map distribution
+<img width="1136" height="620" alt="image" src="https://github.com/user-attachments/assets/f6507a46-ec70-41fb-9c53-217813040c23" />
+
+
+
 
